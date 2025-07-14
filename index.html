@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>블록깨기 게임</title>
+    <title>블록깨기 게임 v2 </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -12,31 +12,29 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            /* 우주 테마 배경색 (기본) */
-            background: linear-gradient(to bottom, #0a0a2a, #2c0b4e);
+            /* 하늘색 배경 */
+            background: linear-gradient(to bottom, #87CEEB, #ADD8E6); /* 연한 하늘색 그라디언트 */
             font-family: 'Inter', sans-serif;
             overflow: hidden; /* 스크롤 방지 */
-            transition: background 1s ease-in-out; /* 배경 전환 효과 */
+            transition: background 1s ease-in-out; /* 배경 전환 효과 (유지) */
         }
-        body.level-up-background {
-            background: linear-gradient(to bottom, #4a00e0, #8e2de2); /* 50점 달성 시 배경 */
-        }
+        /* level-up-background 스타일 제거 */
         .game-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #1a1a3a; /* 어두운 컨테이너 배경 */
+            background-color: #ffffff; /* 밝은 컨테이너 배경 */
             border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* 그림자 강화 */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
             padding: 20px;
-            border: 2px solid #6a0dad; /* 보라색 테두리 */
+            border: 2px solid #4a90e2; /* 파란색 테두리 */
             position: relative;
         }
         canvas {
-            background-color: #00001a; /* 캔버스 배경색 - 더 어둡게 */
+            background-color: #e0f7fa; /* 캔버스 배경색 - 연한 하늘색 */
             display: block;
             border-radius: 10px;
-            border: 1px solid #4a007a; /* 캔버스 테두리 */
+            border: 1px solid #b2ebf2;
             touch-action: none; /* 터치 스크롤 방지 */
         }
         .game-info {
@@ -46,7 +44,7 @@
             padding: 10px 0;
             font-size: 1.2em;
             font-weight: bold;
-            color: #e0e0e0; /* 밝은 글씨색 */
+            color: #333; /* 어두운 글씨색 */
         }
         .game-controls {
             display: flex;
@@ -61,26 +59,26 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            background-image: linear-gradient(to right, #8e2de2, #4a00e0); /* 보라색 그라디언트 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-image: linear-gradient(to right, #6dd5ed, #2193b0); /* 그라디언트 배경 */
             color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
         .game-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-            background-image: linear-gradient(to right, #4a00e0, #8e2de2);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            background-image: linear-gradient(to right, #2193b0, #6dd5ed);
         }
         .game-button:active {
             transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .message-box {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.9); /* 더 어두운 메시지 박스 */
+            background-color: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 25px 40px;
             border-radius: 10px;
@@ -88,7 +86,7 @@
             font-size: 1.8em;
             font-weight: bold;
             z-index: 100;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             display: none; /* 기본적으로 숨김 */
         }
         .message-box button {
@@ -98,12 +96,12 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            background-color: #6a0dad; /* 보라색 버튼 */
+            background-color: #4CAF50;
             color: white;
             transition: background-color 0.3s ease;
         }
         .message-box button:hover {
-            background-color: #4a007a;
+            background-color: #45a049;
         }
 
         /* 모바일 반응형 */
@@ -168,7 +166,7 @@
         canvas.height = canvasHeight;
 
         // 게임 변수
-        let ballRadius = 10;
+        let ballRadius = 15; // 공 크기 증가
         let x = canvas.width / 2;
         let y = canvas.height - 30;
         let dx = 2; // 공의 x 방향 속도
@@ -193,7 +191,7 @@
         let lives = 3;
         let gameStarted = false;
         let animationFrameId;
-        let backgroundChanged = false; // 배경 변경 여부 추적
+        // let backgroundChanged = false; // 배경 변경 여부 추적 (더 이상 사용 안 함)
 
         // 벽돌 배열
         let bricks = [];
@@ -364,11 +362,11 @@
                             score++;
                             scoreDisplay.textContent = score;
 
-                            // 50점 달성 시 배경 변경
-                            if (score >= 50 && !backgroundChanged) {
-                                body.classList.add('level-up-background');
-                                backgroundChanged = true;
-                            }
+                            // 50점 달성 시 배경 변경 로직 제거
+                            // if (score >= 50 && !backgroundChanged) {
+                            //     body.classList.add('level-up-background');
+                            //     backgroundChanged = true;
+                            // }
 
                             if (score === brickRowCount * brickColumnCount) {
                                 showMessageBox("축하합니다! 모든 블록을 깼습니다!", "게임 다시 시작", resetGame);
@@ -456,8 +454,8 @@
             paddleX = (canvas.width - paddleWidth) / 2;
             initBricks(); // 벽돌 초기화
             hideMessageBox(); // 메시지 박스 숨기기
-            body.classList.remove('level-up-background'); // 배경 초기화
-            backgroundChanged = false; // 배경 변경 여부 초기화
+            // body.classList.remove('level-up-background'); // 배경 초기화 (더 이상 사용 안 함)
+            // backgroundChanged = false; // 배경 변경 여부 초기화 (더 이상 사용 안 함)
             draw(); // 초기 화면 그리기
         }
 
